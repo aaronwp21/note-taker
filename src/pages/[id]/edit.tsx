@@ -1,5 +1,5 @@
-export default function Home() {
+export default function Edit() {
   return (
-    <div>Id edit</div>
+    <h1>Id edit</h1>
   )
 }
