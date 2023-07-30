@@ -1,5 +1,9 @@
+import Layout from '@/components/Layout';
+
 export default function Edit() {
   return (
-    <h1>Id edit</h1>
-  )
+    <Layout>
+      <h1>Id edit</h1>
+    </Layout>
+  );
 }
