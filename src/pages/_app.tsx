@@ -28,15 +28,27 @@ export default function App({ Component, pageProps }: AppProps) {
     });
   }
 
+  function onUpdateNote(id: string, { tags, ...data }: NoteData) {
+    setNotes((prevNotes) => {
+      return prevNotes.map((note) => {
+        if (note.id === id) {
+          return { ...note, ...data, tagIds: tags.map((tag) => tag.id) };
+        } else {
+          return note;
+        }
+      });
+    });
+  }
+
   function addTag(tag: Tag) {
     setTags((prevTags) => [...prevTags, tag]);
   }
-  
 
   return (
     <Component
       {...pageProps}
       onCreateNote={onCreateNote}
+      onUpdateNote={onUpdateNote}
       onAddTag={addTag}
       availableTags={tags}
       notes={notesWithTags}
