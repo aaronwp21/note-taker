@@ -1,39 +1,67 @@
-import React, {useState} from 'react'
-import Link from 'next/link'
-import { Row, Col, Stack, Button, Form } from 'react-bootstrap'
-import ReactSelect from 'react-select'
+import React, { useMemo, useState } from 'react';
+import Link from 'next/link';
+import { Row, Col, Stack, Button, Form, Card, Badge } from 'react-bootstrap';
+import ReactSelect from 'react-select';
 import { Tag } from '@/types';
+import styles from '@/styles/NoteList.module.css';
+
+type SimplifiedNote = {
+  tags: Tag[];
+  title: string;
+  id: string;
+};
 
 type NoteListProps = {
-  availableTags: Tag[]
-}
+  availableTags: Tag[];
+  notes: SimplifiedNote[];
+};
 
-function NoteList({ availableTags }: NoteListProps) {
+function NoteList({ availableTags, notes }: NoteListProps) {
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const [title, setTitle] = useState('');
+
+  const filteredNotes = useMemo(() => {
+    return notes.filter((note) => {
+      return (
+        (title === '' ||
+          note.title.toLowerCase().includes(title.toLowerCase())) &&
+        (selectedTags.length === 0 ||
+          selectedTags.every((tag) =>
+            note.tags.some((noteTag) => noteTag.id === tag.id),
+          ))
+      );
+    });
+  }, [title, selectedTags, notes]);
 
   return (
     <>
-      <Row>
-        <Col><h1>Notes</h1></Col>
+      <Row className="align-items-center mb-4">
+        <Col>
+          <h1>Notes</h1>
+        </Col>
         <Col xs="auto">
-          <Stack gap={2} direction='horizontal'>
+          <Stack gap={2} direction="horizontal">
             <Link href={'/new'}>
-              <Button variant='primary'>Create</Button>
+              <Button variant="primary">Create</Button>
             </Link>
-            <Button variant='outline-secondary'>Edit Tags</Button>
+            <Button variant="outline-secondary">Edit Tags</Button>
           </Stack>
         </Col>
       </Row>
       <Form>
-        <Row className='mb-4'>
+        <Row className="mb-4">
           <Col>
-            <Form.Group controlId='title'>
+            <Form.Group controlId="title">
               <Form.Label>Title</Form.Label>
-              <Form.Control type='text' />
+              <Form.Control
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
             </Form.Group>
           </Col>
           <Col>
-          <Form.Group controlId="tags">
+            <Form.Group controlId="tags">
               <Form.Label>Tags</Form.Label>
               <ReactSelect
                 value={selectedTags.map((tag) => {
@@ -55,8 +83,47 @@ function NoteList({ availableTags }: NoteListProps) {
           </Col>
         </Row>
       </Form>
+      <Row xs={1} sm={2} lg={3} xl={4} className="g-3">
+        {filteredNotes.map((note) => (
+          <Col key={note.id}>
+            <NoteCard id={note.id} title={note.title} tags={note.tags} />
+          </Col>
+        ))}
+      </Row>
     </>
-  )
+  );
 }
 
-export default NoteList
+function NoteCard({ id, title, tags }: SimplifiedNote) {
+  return (
+    <Card
+      as={Link}
+      href={`/${id}`}
+      className={`h-100 text-reset text-decoration-none ${styles.card}`}
+    >
+      <Card.Body>
+        <Stack
+          gap={2}
+          className="align-items-center justify-content-center h-100"
+        >
+          <span className="fs-5">{title}</span>
+          {tags.length > 0 && (
+            <Stack
+              gap={1}
+              direction="horizontal"
+              className="justify-content-center flex-wrap"
+            >
+              {tags.map((tag) => (
+                <Badge className="text-truncate" key={tag.id}>
+                  {tag.label}
+                </Badge>
+              ))}
+            </Stack>
+          )}
+        </Stack>
+      </Card.Body>
+    </Card>
+  );
+}
+
+export default NoteList;

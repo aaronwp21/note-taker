@@ -39,6 +39,7 @@ export default function App({ Component, pageProps }: AppProps) {
       onCreateNote={onCreateNote}
       onAddTag={addTag}
       availableTags={tags}
+      notes={notesWithTags}
     />
   );
 }

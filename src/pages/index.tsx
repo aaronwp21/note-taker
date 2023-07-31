@@ -3,14 +3,10 @@ import Layout from '@/components/Layout';
 import NoteList from '@/components/NoteList';
 import { Tag } from '@/types';
 
-type NoteListProps = {
-  availableTags: Tag[]
-}
-
-export default function Home({ availableTags }: NoteListProps) {
+export default function Home({ availableTags, notes }: any) {
   return (
     <Layout>
-      <NoteList availableTags={availableTags} />
+      <NoteList availableTags={availableTags} notes={notes} />
     </Layout>
   );
 }
