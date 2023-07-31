@@ -1,9 +1,16 @@
-import React from 'react'
+import React, {useState} from 'react'
 import Link from 'next/link'
 import { Row, Col, Stack, Button, Form } from 'react-bootstrap'
 import ReactSelect from 'react-select'
+import { Tag } from '@/types';
 
-function NoteList() {
+type NoteListProps = {
+  availableTags: Tag[]
+}
+
+function NoteList({ availableTags }: NoteListProps) {
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+
   return (
     <>
       <Row>
@@ -28,7 +35,7 @@ function NoteList() {
           <Col>
           <Form.Group controlId="tags">
               <Form.Label>Tags</Form.Label>
-              {/* <ReactSelect
+              <ReactSelect
                 value={selectedTags.map((tag) => {
                   return { label: tag.label, value: tag.id };
                 })}
@@ -43,7 +50,7 @@ function NoteList() {
                   );
                 }}
                 isMulti
-              /> */}
+              />
             </Form.Group>
           </Col>
         </Row>
