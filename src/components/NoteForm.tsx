@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { Form, Stack, Row, Col, Button } from 'react-bootstrap';
 import CreateableReactSelect from 'react-select/creatable';
 import { NoteData, Tag } from '@/types';
@@ -15,6 +16,7 @@ function NoteForm({ onSubmit, onAddTag, availableTags }: NoteFormProps) {
   const titleRef = useRef<HTMLInputElement>(null);
   const markdownRef = useRef<HTMLTextAreaElement>(null);
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const router = useRouter();
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -24,6 +26,8 @@ function NoteForm({ onSubmit, onAddTag, availableTags }: NoteFormProps) {
       markdown: markdownRef.current!.value,
       tags: selectedTags,
     });
+
+    router.back()
   }
 
   return (
