@@ -40,6 +40,12 @@ export default function App({ Component, pageProps }: AppProps) {
     });
   }
 
+  function onDeleteNote(id: string) {
+    setNotes(prevNotes => {
+      return prevNotes.filter(note => note.id !== id)
+    })
+  }
+
   function addTag(tag: Tag) {
     setTags((prevTags) => [...prevTags, tag]);
   }
@@ -49,6 +55,7 @@ export default function App({ Component, pageProps }: AppProps) {
       {...pageProps}
       onCreateNote={onCreateNote}
       onUpdateNote={onUpdateNote}
+      onDelete={onDeleteNote}
       onAddTag={addTag}
       availableTags={tags}
       notes={notesWithTags}
