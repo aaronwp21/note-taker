@@ -2,13 +2,13 @@ import React, { useMemo, useState } from 'react';
 import type { AppProps } from 'next/app';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@/styles/globals.css';
-import { NoteData, RawNote } from '@/types';
+import { NoteData, RawNote, Tag } from '@/types';
 import { useLocalStorage } from '@/components/useLocalStorage';
 import { v4 as uuidV4 } from 'uuid';
 
 export default function App({ Component, pageProps }: AppProps) {
   const [notes, setNotes] = useLocalStorage<RawNote[]>('NOTES', []);
-  const [tags, setTags] = useLocalStorage<RawNote[]>('TAGS', []);
+  const [tags, setTags] = useLocalStorage<Tag[]>('TAGS', []);
 
   const notesWithTags = useMemo(() => {
     return notes.map((note) => {
@@ -28,5 +28,17 @@ export default function App({ Component, pageProps }: AppProps) {
     });
   }
 
-  return <Component {...pageProps} onCreateNote={onCreateNote} />;
+  function addTag(tag: Tag) {
+    setTags((prevTags) => [...prevTags, tag]);
+  }
+  
+
+  return (
+    <Component
+      {...pageProps}
+      onCreateNote={onCreateNote}
+      onAddTag={addTag}
+      availableTags={tags}
+    />
+  );
 }
