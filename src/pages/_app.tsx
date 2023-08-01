@@ -50,6 +50,24 @@ export default function App({ Component, pageProps }: AppProps) {
     setTags((prevTags) => [...prevTags, tag]);
   }
 
+  function updateTag(id: string, label: string) {
+    setTags(prevTags => {
+      return prevTags.map(tag => {
+        if (tag.id === id) {
+          return { ...tag, label }
+        } else {
+          return tag
+        }
+      })
+    })
+  }
+
+  function deleteTag(id: string) {
+    setTags(prevTags => {
+      return prevTags.filter(tag => tag.id !== id)
+    })
+  }
+
   return (
     <Component
       {...pageProps}
@@ -58,6 +76,8 @@ export default function App({ Component, pageProps }: AppProps) {
       onDelete={onDeleteNote}
       onAddTag={addTag}
       availableTags={tags}
+      updateTag={updateTag}
+      deleteTag={deleteTag}
       notes={notesWithTags}
     />
   );

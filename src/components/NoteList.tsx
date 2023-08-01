@@ -23,15 +23,24 @@ type SimplifiedNote = {
 type NoteListProps = {
   availableTags: Tag[];
   notes: SimplifiedNote[];
+  deleteTag: (id: string) => void;
+  updateTag: (id: string, label: string) => void;
 };
 
 type EditTagsModalProps = {
   show: boolean;
   availableTags: Tag[];
   handleClose: () => void;
+  onDelete: (id: string) => void;
+  onUpdate: (id: string, label: string) => void;
 };
 
-function NoteList({ availableTags, notes }: NoteListProps) {
+function NoteList({
+  availableTags,
+  deleteTag,
+  updateTag,
+  notes,
+}: NoteListProps) {
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [title, setTitle] = useState('');
   const [editTagsModalIsOpen, setEditTagsModalIsOpen] = useState(false);
@@ -112,6 +121,8 @@ function NoteList({ availableTags, notes }: NoteListProps) {
         ))}
       </Row>
       <EditTagsModal
+        onUpdate={updateTag}
+        onDelete={deleteTag}
         show={editTagsModalIsOpen}
         handleClose={() => setEditTagsModalIsOpen(false)}
         availableTags={availableTags}
@@ -156,6 +167,8 @@ function EditTagsModal({
   availableTags,
   handleClose,
   show,
+  onDelete,
+  onUpdate,
 }: EditTagsModalProps) {
   return (
     <Modal show={show} onHide={handleClose}>
@@ -166,14 +179,25 @@ function EditTagsModal({
         <Form>
           <Stack gap={2}>
             {availableTags.map((tag) => {
-              return <Row key={tag.id}>
-                <Col>
-                  <Form.Control type="text" value={tag.label} />
-                </Col>
-                <Col xs="auto">
-                  <Button variant="outline-danger">&times;</Button>
-                </Col>
-              </Row>;
+              return (
+                <Row key={tag.id}>
+                  <Col>
+                    <Form.Control
+                      type="text"
+                      value={tag.label}
+                      onChange={(e) => onUpdate(tag.id, e.target.value)}
+                    />
+                  </Col>
+                  <Col xs="auto">
+                    <Button
+                      onClick={() => onDelete(tag.id)}
+                      variant="outline-danger"
+                    >
+                      &times;
+                    </Button>
+                  </Col>
+                </Row>
+              );
             })}
           </Stack>
         </Form>
