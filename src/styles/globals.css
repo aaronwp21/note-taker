@@ -5,3 +5,12 @@
 .cancelBtn:hover {
   color: white;
 }
+
+.userBtn {
+  cursor: pointer;
+}
+
+.logoutLink {
+  color: black;
+  text-decoration: none;
+}

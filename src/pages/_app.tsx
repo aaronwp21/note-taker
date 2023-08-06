@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import type { AppProps } from 'next/app';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@/styles/globals.css';
+import { UserProvider } from '@auth0/nextjs-auth0/client';
 import { NoteData, RawNote, Tag } from '@/types';
 import { useLocalStorage } from '@/components/useLocalStorage';
 import { v4 as uuidV4 } from 'uuid';
@@ -69,16 +70,18 @@ export default function App({ Component, pageProps }: AppProps) {
   }
 
   return (
-    <Component
-      {...pageProps}
-      onCreateNote={onCreateNote}
-      onUpdateNote={onUpdateNote}
-      onDelete={onDeleteNote}
-      onAddTag={addTag}
-      availableTags={tags}
-      updateTag={updateTag}
-      deleteTag={deleteTag}
-      notes={notesWithTags}
-    />
+    <UserProvider>
+      <Component
+        {...pageProps}
+        onCreateNote={onCreateNote}
+        onUpdateNote={onUpdateNote}
+        onDelete={onDeleteNote}
+        onAddTag={addTag}
+        availableTags={tags}
+        updateTag={updateTag}
+        deleteTag={deleteTag}
+        notes={notesWithTags}
+      />
+    </UserProvider>
   );
 }

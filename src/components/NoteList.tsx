@@ -10,9 +10,11 @@ import {
   Badge,
   Modal,
 } from 'react-bootstrap';
+import { useUser } from '@auth0/nextjs-auth0/client';
 import ReactSelect from 'react-select';
 import { Tag } from '@/types';
 import styles from '@/styles/NoteList.module.css';
+import User from './User';
 
 type SimplifiedNote = {
   tags: Tag[];
@@ -45,6 +47,8 @@ function NoteList({
   const [title, setTitle] = useState('');
   const [editTagsModalIsOpen, setEditTagsModalIsOpen] = useState(false);
 
+  const { user } = useUser();
+
   const filteredNotes = useMemo(() => {
     return notes.filter((note) => {
       return (
@@ -65,17 +69,24 @@ function NoteList({
           <h1>Notes</h1>
         </Col>
         <Col xs="auto">
-          <Stack gap={2} direction="horizontal">
-            <Link href={'/new'}>
-              <Button variant="primary">Create</Button>
-            </Link>
-            <Button
-              onClick={() => setEditTagsModalIsOpen(true)}
-              variant="outline-secondary"
-            >
-              Edit Tags
-            </Button>
-          </Stack>
+          {user ? (
+            <Stack gap={4} direction="horizontal">
+              <Stack gap={2} direction='horizontal'>
+                <Link href={'/new'}>
+                  <Button variant="primary">Create</Button>
+                </Link>
+                <Button
+                  onClick={() => setEditTagsModalIsOpen(true)}
+                  variant="outline-secondary"
+                >
+                  Edit Tags
+                </Button>
+              </Stack>
+              <User />
+            </Stack>
+          ) : (
+            <User />
+          )}
         </Col>
       </Row>
       <Form>
