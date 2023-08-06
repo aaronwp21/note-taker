@@ -1,7 +1,9 @@
-import Image from 'next/image';
+import { useContext } from 'react';
+import { DashboardContext } from '@/components/contexts/dashboard.context';
 import Layout from '@/components/Layout';
 import NoteList from '@/components/NoteList';
 import { Tag } from '@/types';
+
 
 type SimplifiedNote = {
   tags: Tag[];
@@ -16,12 +18,9 @@ type NoteListProps = {
   updateTag: (id: string, label: string) => void;
 };
 
-export default function Home({
-  availableTags,
-  updateTag,
-  deleteTag,
-  notes,
-}: NoteListProps) {
+export default function Home() {
+  const { availableTags, notes, updateTag, deleteTag } = useContext(DashboardContext)
+
   return (
     <Layout>
       <NoteList
