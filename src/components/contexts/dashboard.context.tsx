@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useMemo,
+} from 'react';
 import { NextComponentType, NextPageContext } from 'next';
 import type { UserProfile } from '@auth0/nextjs-auth0/client';
 import { v4 as uuidV4 } from 'uuid';
@@ -7,14 +13,14 @@ import { Note, NoteData, RawNote, Tag } from '@/types';
 
 type DashboardContextProps = {
   fetchDashboard: (user: UserProfile) => Promise<void> | [];
-  onCreateNote: ({ tags, ...data }: NoteData) => void;
+  onCreateNote: (user: UserProfile, { tags, ...data }: NoteData) => void;
   onUpdateNote: (id: string, { tags, ...data }: NoteData) => void;
   onDelete: (id: string) => void;
   onAddTag: (tag: Tag) => void;
   updateTag: (id: string, label: string) => void;
   deleteTag: (id: string) => void;
-  notes: Note[],
-  availableTags: Tag[]
+  notes: Note[];
+  availableTags: Tag[];
 };
 
 export const DashboardContext = createContext<DashboardContextProps>({
@@ -26,7 +32,7 @@ export const DashboardContext = createContext<DashboardContextProps>({
   updateTag: () => [],
   deleteTag: () => [],
   notes: [],
-  availableTags: []
+  availableTags: [],
 });
 
 export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
@@ -42,28 +48,56 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
     });
   }, [notes, tags]);
 
-  const fetchDashboard = useCallback(async (user: UserProfile) => {
-    try {
-      const response = await fetch(`/api/dashboard/${user.sub}`);
-      if (!response.ok) {
-        throw response;
+  const fetchDashboard = useCallback(
+    async (user: UserProfile) => {
+      try {
+        const response = await fetch(`/api/dashboard/${user.sub}`);
+        if (!response.ok) {
+          throw response;
+        }
+        const data = await response.json();
+        setNotes(data['NOTES']);
+        setTags(data['TAGS']);
+      } catch (err) {
+        console.log(err);
       }
-      const data = await response.json();
-      setNotes(data['NOTES']);
-      setTags(data['TAGS']);
-    } catch (err) {
-      console.log (err);
-    }
-  }, [setNotes, setTags]);
+    },
+    [setNotes, setTags],
+  );
 
-  function onCreateNote({ tags, ...data }: NoteData) {
-    setNotes((prevNotes) => {
-      return [
-        ...prevNotes,
-        { ...data, id: uuidV4(), tagIds: tags.map((tag) => tag.id) },
-      ];
-    });
-  }
+  const onCreateNote = useCallback(
+    async (user: UserProfile, { tags, ...data }: NoteData) => {
+      try {
+        const id = uuidV4();
+        const response = await fetch(`/api/notes/${user.sub}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            notesArr: [
+              ...notes,
+              { ...data, id: id, tagIds: tags.map((tag) => tag.id) },
+            ],
+          }),
+        });
+        if (!response.ok) {
+          throw response;
+        }
+        const res = await response.json();
+        console.log(res);
+        setNotes((prevNotes) => {
+          return [
+            ...prevNotes,
+            { ...data, id: id, tagIds: tags.map((tag) => tag.id) },
+          ];
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    [setNotes, notes],
+  );
 
   function onUpdateNote(id: string, { tags, ...data }: NoteData) {
     setNotes((prevNotes) => {
@@ -78,9 +112,9 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
   }
 
   function onDeleteNote(id: string) {
-    setNotes(prevNotes => {
-      return prevNotes.filter(note => note.id !== id)
-    })
+    setNotes((prevNotes) => {
+      return prevNotes.filter((note) => note.id !== id);
+    });
   }
 
   function addTag(tag: Tag) {
@@ -88,21 +122,21 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
   }
 
   function updateTag(id: string, label: string) {
-    setTags(prevTags => {
-      return prevTags.map(tag => {
+    setTags((prevTags) => {
+      return prevTags.map((tag) => {
         if (tag.id === id) {
-          return { ...tag, label }
+          return { ...tag, label };
         } else {
-          return tag
+          return tag;
         }
-      })
-    })
+      });
+    });
   }
 
   function deleteTag(id: string) {
-    setTags(prevTags => {
-      return prevTags.filter(tag => tag.id !== id)
-    })
+    setTags((prevTags) => {
+      return prevTags.filter((tag) => tag.id !== id);
+    });
   }
 
   return (
@@ -117,8 +151,9 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
         deleteTag,
         notes: notesWithTags,
         availableTags: tags,
-      }}>
+      }}
+    >
       {children}
     </DashboardContext.Provider>
-  )
-}
+  );
+};

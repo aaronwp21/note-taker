@@ -1,13 +1,15 @@
 import React, { useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useUser } from '@auth0/nextjs-auth0/client';
+import { UserProfile } from '@auth0/nextjs-auth0/client';
 import { Form, Stack, Row, Col, Button } from 'react-bootstrap';
 import CreateableReactSelect from 'react-select/creatable';
 import { NoteData, Tag } from '@/types';
 import { v4 as uuidV4 } from 'uuid';
 
 type NoteFormProps = {
-  onSubmit: (data: NoteData) => void;
+  onSubmit: (user: UserProfile, data: NoteData) => void;
   onAddTag: (tag: Tag) => void;
   availableTags: Tag[];
 } & Partial<NoteData>;
@@ -25,14 +27,18 @@ function NoteForm({
   const [selectedTags, setSelectedTags] = useState<Tag[]>(tags);
   const router = useRouter();
 
+  const { user } = useUser();
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    onSubmit({
-      title: titleRef.current!.value,
-      markdown: markdownRef.current!.value,
-      tags: selectedTags,
-    });
+    if (user) {
+      onSubmit(user, {
+        title: titleRef.current!.value,
+        markdown: markdownRef.current!.value,
+        tags: selectedTags,
+      });
+    }
 
     router.back();
   }
@@ -76,7 +82,13 @@ function NoteForm({
         </Row>
         <Form.Group controlId="markdown">
           <Form.Label>Body</Form.Label>
-          <Form.Control defaultValue={markdown} required as="textarea" ref={markdownRef} rows={15} />
+          <Form.Control
+            defaultValue={markdown}
+            required
+            as="textarea"
+            ref={markdownRef}
+            rows={15}
+          />
         </Form.Group>
         <Stack direction="horizontal" gap={2} className="justify-content-end">
           <Button type="submit" variant="primary">

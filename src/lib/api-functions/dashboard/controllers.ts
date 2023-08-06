@@ -53,7 +53,7 @@ export const updateDbNotes = async (
   try {
     const data = await updateNotes(userId, notesArr);
     if (data.n === 0) return res.status(404).send({ message: 'Not Found' });
-    return res.status(200).send({ message: 'Updated' });
+    return res.status(200).send({ data });
   } catch (err) {
     console.log(err);
     res.status(500).send(err)

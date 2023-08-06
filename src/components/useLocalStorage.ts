@@ -6,15 +6,15 @@ export function useLocalStorage<T>(key: string, initialValue: T | (() => T)) {
   const { user } = useUser();
   const [value, setValue] = useState<T>(() => {
     if (typeof window !== 'undefined') {
-      const dbValue = localStorage.getItem(key);
-      if (dbValue == null) {
+      const jsonValue = localStorage.getItem(key);
+      if (jsonValue == null) {
         if (typeof initialValue === 'function') {
           return (initialValue as () => T)();
         } else {
           return initialValue;
         }
       } else {
-        return JSON.parse(dbValue);
+        return JSON.parse(jsonValue);
       }
     } else {
       if (typeof initialValue === 'function') {
@@ -27,6 +27,12 @@ export function useLocalStorage<T>(key: string, initialValue: T | (() => T)) {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+  }, [key, value])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
       if (user) {
         fetch(`/api/dashboard/${user.sub}`)
           .then((res) => {
@@ -36,7 +42,6 @@ export function useLocalStorage<T>(key: string, initialValue: T | (() => T)) {
             setValue(data[key]);
           });
       }
-      localStorage.setItem(key, JSON.stringify(value));
     }
   }, [user, key]);
 

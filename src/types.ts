@@ -1,3 +1,5 @@
+import { UserProfile } from "@auth0/nextjs-auth0/client"
+
 export type Note = {
   id: string
 } & NoteData
@@ -24,7 +26,7 @@ export type Tag = {
 }
 
 export type NewNoteProps = {
-  onSubmit: (data: NoteData) => void
+  onSubmit: (user:UserProfile, data: NoteData) => void
   onAddTag: (tag: Tag) => void
   availableTags: Tag[]
 }
