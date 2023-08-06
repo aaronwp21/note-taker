@@ -7,21 +7,26 @@ import { Note, NoteData, RawNote, Tag } from '@/types';
 
 type DashboardContextProps = {
   fetchDashboard: (user: UserProfile) => Promise<void> | [];
-  onCreateNote: (userId:string, noteData:NoteData) => Promise<void> | [];
-  notes: RawNote[],
-  tags: Tag[]
+  onCreateNote: ({ tags, ...data }: NoteData) => void;
+  onUpdateNote: (id: string, { tags, ...data }: NoteData) => void;
+  onDelete: (id: string) => void;
+  onAddTag: (tag: Tag) => void;
+  updateTag: (id: string, label: string) => void;
+  deleteTag: (id: string) => void;
+  notes: Note[],
+  availableTags: Tag[]
 };
 
 export const DashboardContext = createContext<DashboardContextProps>({
   fetchDashboard: () => [],
   onCreateNote: () => [],
-  // onUpdateNote: () => {},
-  // onDeleteNote: () => [],
-  // onAddTag: () => [],
-  // onUpdateTag: () => {},
-  // onDeleteTag: () => [],
+  onUpdateNote: () => [],
+  onDelete: () => [],
+  onAddTag: () => [],
+  updateTag: () => [],
+  deleteTag: () => [],
   notes: [],
-  tags: []
+  availableTags: []
 });
 
 export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
@@ -49,83 +54,69 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
     } catch (err) {
       console.log (err);
     }
-  }, []);
+  }, [setNotes, setTags]);
 
-  const onCreateNote = useCallback(async (userId:string, noteData:NoteData) => {
-    try {
-      const response = await fetch('/api/notes', {
-        method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({userId: userId, noteData: noteData}),
+  function onCreateNote({ tags, ...data }: NoteData) {
+    setNotes((prevNotes) => {
+      return [
+        ...prevNotes,
+        { ...data, id: uuidV4(), tagIds: tags.map((tag) => tag.id) },
+      ];
+    });
+  }
+
+  function onUpdateNote(id: string, { tags, ...data }: NoteData) {
+    setNotes((prevNotes) => {
+      return prevNotes.map((note) => {
+        if (note.id === id) {
+          return { ...note, ...data, tagIds: tags.map((tag) => tag.id) };
+        } else {
+          return note;
+        }
+      });
+    });
+  }
+
+  function onDeleteNote(id: string) {
+    setNotes(prevNotes => {
+      return prevNotes.filter(note => note.id !== id)
+    })
+  }
+
+  function addTag(tag: Tag) {
+    setTags((prevTags) => [...prevTags, tag]);
+  }
+
+  function updateTag(id: string, label: string) {
+    setTags(prevTags => {
+      return prevTags.map(tag => {
+        if (tag.id === id) {
+          return { ...tag, label }
+        } else {
+          return tag
+        }
       })
-      if (!response.ok) {
-        throw response;
-      }
-      const data = await response.json();
-      console.log(data);
-    } catch (err) {
-      console.log(err)
-    }
-  }, [])
+    })
+  }
 
-  // function onCreateNote({ tags, ...data }: NoteData) {
-  //   setNotes((prevNotes) => {
-  //     return [
-  //       ...prevNotes,
-  //       { ...data, id: uuidV4(), tagIds: tags.map((tag) => tag.id) },
-  //     ];
-  //   });
-  // }
-
-  // function onUpdateNote(id: string, { tags, ...data }: NoteData) {
-  //   setNotes((prevNotes) => {
-  //     return prevNotes.map((note) => {
-  //       if (note.id === id) {
-  //         return { ...note, ...data, tagIds: tags.map((tag) => tag.id) };
-  //       } else {
-  //         return note;
-  //       }
-  //     });
-  //   });
-  // }
-
-  // function onDeleteNote(id: string) {
-  //   setNotes(prevNotes => {
-  //     return prevNotes.filter(note => note.id !== id)
-  //   })
-  // }
-
-  // function onAddTag(tag: Tag) {
-  //   setTags((prevTags) => [...prevTags, tag]);
-  // }
-
-  // function onUpdateTag(id: string, label: string) {
-  //   setTags(prevTags => {
-  //     return prevTags.map(tag => {
-  //       if (tag.id === id) {
-  //         return { ...tag, label }
-  //       } else {
-  //         return tag
-  //       }
-  //     })
-  //   })
-  // }
-
-  // function onDeleteTag(id: string) {
-  //   setTags(prevTags => {
-  //     return prevTags.filter(tag => tag.id !== id)
-  //   })
-  // }
+  function deleteTag(id: string) {
+    setTags(prevTags => {
+      return prevTags.filter(tag => tag.id !== id)
+    })
+  }
 
   return (
     <DashboardContext.Provider
       value={{
         fetchDashboard,
         onCreateNote,
-        notes,
-        tags
+        onUpdateNote,
+        onDelete: onDeleteNote,
+        onAddTag: addTag,
+        updateTag,
+        deleteTag,
+        notes: notesWithTags,
+        availableTags: tags,
       }}>
       {children}
     </DashboardContext.Provider>
