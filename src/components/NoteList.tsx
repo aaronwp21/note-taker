@@ -25,7 +25,7 @@ type SimplifiedNote = {
 type NoteListProps = {
   availableTags: Tag[];
   notes: SimplifiedNote[];
-  deleteTag: (id: string) => void;
+  deleteTag: (user: UserProfile | undefined, id: string) => void;
   updateTag: (user: UserProfile | undefined, id: string, label: string) => void;
 };
 
@@ -34,7 +34,7 @@ type EditTagsModalProps = {
   show: boolean;
   availableTags: Tag[];
   handleClose: () => void;
-  onDelete: (id: string) => void;
+  onDelete: (user: UserProfile | undefined, id: string) => void;
   onUpdate: (user: UserProfile | undefined, id: string, label: string) => void;
 };
 
@@ -204,7 +204,7 @@ function EditTagsModal({
                   </Col>
                   <Col xs="auto">
                     <Button
-                      onClick={() => onDelete(tag.id)}
+                      onClick={() => onDelete(user, tag.id)}
                       variant="outline-danger"
                     >
                       &times;

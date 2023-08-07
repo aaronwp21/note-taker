@@ -16,7 +16,7 @@ type SimplifiedNote = {
 type NoteListProps = {
   availableTags: Tag[];
   notes: SimplifiedNote[];
-  deleteTag: (id: string) => void;
+  deleteTag: (user: UserProfile | undefined, id: string) => void;
   updateTag: (user: UserProfile | undefined, id: string, label: string) => void;
 };
 

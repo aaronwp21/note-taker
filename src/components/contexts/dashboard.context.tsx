@@ -22,7 +22,7 @@ type DashboardContextProps = {
   onDelete: (user: UserProfile | undefined, id: string) => void;
   onAddTag: (user: UserProfile | undefined, tag: Tag) => void;
   updateTag: (user: UserProfile | undefined, id: string, label: string) => void;
-  deleteTag: (id: string) => void;
+  deleteTag: (user: UserProfile | undefined, id: string) => void;
   notes: Note[];
   availableTags: Tag[];
 };
@@ -163,9 +163,9 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
           const res = await response.json();
           console.log(res);
         }
-          setNotes((prevNotes) => {
-            return prevNotes.filter((note) => note.id !== id);
-          });
+        setNotes((prevNotes) => {
+          return prevNotes.filter((note) => note.id !== id);
+        });
       } catch (err) {
         console.log(err);
       }
@@ -193,7 +193,7 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
           const res = await response.json();
           console.log(res);
         }
-          setTags((prevTags) => [...prevTags, tag]);
+        setTags((prevTags) => [...prevTags, tag]);
       } catch (err) {
         console.log(err);
       }
@@ -243,11 +243,35 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
     [tags, setTags],
   );
 
-  function deleteTag(id: string) {
-    setTags((prevTags) => {
-      return prevTags.filter((tag) => tag.id !== id);
-    });
-  }
+  const deleteTag = useCallback(
+    async (user: UserProfile | undefined, id: string) => {
+      try {
+        const deletedTag = tags.filter((tag) => tag.id !== id);
+        if (user) {
+          const response = await fetch(`/api/tags/${user.sub}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              tagsArr: deletedTag,
+            }),
+          });
+          if (!response.ok) {
+            throw response;
+          }
+          const res = await response.json();
+          console.log(res);
+        }
+        setTags((prevTags) => {
+          return prevTags.filter((tag) => tag.id !== id);
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    [tags, setTags],
+  );
 
   return (
     <DashboardContext.Provider
