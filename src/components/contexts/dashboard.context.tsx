@@ -89,7 +89,6 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
           throw response;
         }
         const res = await response.json();
-        console.log(res);
         setNotes((prevNotes) => {
           return [
             ...prevNotes,
@@ -126,7 +125,6 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
           throw response;
         }
         const res = await response.json();
-        console.log(res);
         setNotes((prevNotes) => {
           return prevNotes.map((note) => {
             if (note.id === id) {
@@ -161,7 +159,6 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
             throw response;
           }
           const res = await response.json();
-          console.log(res);
         }
         setNotes((prevNotes) => {
           return prevNotes.filter((note) => note.id !== id);
@@ -191,7 +188,6 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
             throw response;
           }
           const res = await response.json();
-          console.log(res);
         }
         setTags((prevTags) => [...prevTags, tag]);
       } catch (err) {
@@ -225,7 +221,6 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
             throw response;
           }
           const res = await response.json();
-          console.log(res);
         }
         setTags((prevTags) => {
           return prevTags.map((tag) => {
@@ -261,7 +256,6 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
             throw response;
           }
           const res = await response.json();
-          console.log(res);
         }
         setTags((prevTags) => {
           return prevTags.filter((tag) => tag.id !== id);
