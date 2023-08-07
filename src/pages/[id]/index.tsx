@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { UserProfile } from '@auth0/nextjs-auth0/client';
@@ -18,8 +18,14 @@ export default function Page() {
 
   const { user } = useUser();
 
+  useEffect(() => {
+    if (!user) {
+      router.push('/');
+    }
+  }, [user, router])
+
   if (!user) {
-    router.push('/');
+    return null;
   }
 
   return (
