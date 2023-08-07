@@ -14,7 +14,11 @@ import { Note, NoteData, RawNote, Tag } from '@/types';
 type DashboardContextProps = {
   fetchDashboard: (user: UserProfile) => Promise<void> | [];
   onCreateNote: (user: UserProfile, { tags, ...data }: NoteData) => void;
-  onUpdateNote: (id: string, { tags, ...data }: NoteData) => void;
+  onUpdateNote: (
+    user: UserProfile,
+    id: string,
+    { tags, ...data }: NoteData,
+  ) => void;
   onDelete: (id: string) => void;
   onAddTag: (tag: Tag) => void;
   updateTag: (id: string, label: string) => void;
@@ -99,17 +103,57 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
     [setNotes, notes],
   );
 
-  function onUpdateNote(id: string, { tags, ...data }: NoteData) {
-    setNotes((prevNotes) => {
-      return prevNotes.map((note) => {
-        if (note.id === id) {
-          return { ...note, ...data, tagIds: tags.map((tag) => tag.id) };
-        } else {
-          return note;
+  const onUpdateNote = useCallback(
+    async (user: UserProfile, id: string, { tags, ...data }: NoteData) => {
+      try {
+        const editedNote = notes.map((note) => {
+          if (note.id === id) {
+            return { ...note, ...data, tagIds: tags.map((tag) => tag.id) };
+          } else {
+            return note;
+          }
+        });
+        const response = await fetch(`/api/notes/${user.sub}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            notesArr: editedNote,
+          }),
+        });
+        if (!response.ok) {
+          throw response;
         }
-      });
-    });
-  }
+        const res = await response.json();
+        console.log(res);
+        setNotes((prevNotes) => {
+          return prevNotes.map((note) => {
+            if (note.id === id) {
+              return { ...note, ...data, tagIds: tags.map((tag) => tag.id) };
+            } else {
+              return note;
+            }
+          });
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    [notes, setNotes],
+  );
+
+  // function onUpdateNote(id: string, { tags, ...data }: NoteData) {
+  //   setNotes((prevNotes) => {
+  //     return prevNotes.map((note) => {
+  //       if (note.id === id) {
+  //         return { ...note, ...data, tagIds: tags.map((tag) => tag.id) };
+  //       } else {
+  //         return note;
+  //       }
+  //     });
+  //   });
+  // }
 
   function onDeleteNote(id: string) {
     setNotes((prevNotes) => {

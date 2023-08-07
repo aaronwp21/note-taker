@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { DashboardContext } from '@/components/contexts/dashboard.context';
 import Layout from '@/components/Layout';
 import NoteLayout from '@/components/NoteLayout';
 import { Note } from '@/types';
@@ -8,13 +9,10 @@ type NoteLayoutProps = {
   notes: Note[];
 };
 
-export default function Edit({
-  notes,
-  onUpdateNote,
-  onAddTag,
-  availableTags,
-}: any) {
+export default function Edit() {
   const [currentNote, setCurrentNote] = useState<Note | undefined | null>(null);
+
+  const { notes, onUpdateNote, onAddTag, availableTags } = useContext(DashboardContext)
 
   return (
     <Layout>

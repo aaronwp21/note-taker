@@ -17,7 +17,7 @@ function NoteLayout({ notes, children, setCurrentNote }: NoteLayoutProps) {
 
   useEffect(() => {
     setCurrentNote(note);
-  }, [note]);
+  }, [note, setCurrentNote]);
 
   return <div className="m-4">{children}</div>;
 }

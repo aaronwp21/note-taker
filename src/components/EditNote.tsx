@@ -1,9 +1,10 @@
 import React from 'react';
-import NoteForm from './NoteForm';
+import { UserProfile } from '@auth0/nextjs-auth0/client';
+import EditNoteForm from './EditNoteForm';
 import { Note, NoteData, Tag } from '@/types';
 
 type EditNoteProps = {
-  onSubmit: (id: string, data: NoteData) => void;
+  onSubmit: (user: UserProfile, id: string, data: NoteData) => void;
   onAddTag: (tag: Tag) => void;
   availableTags: Tag[];
   note: any
@@ -13,11 +14,12 @@ function EditNote({ onSubmit, onAddTag, availableTags, note }: EditNoteProps) {
   return (
     <>
       <h1 className="mb-4">Edit Note</h1>
-      <NoteForm
+      <EditNoteForm
         title={note.title}
         markdown={note.markdown}
         tags={note.tags}
-        onSubmit={data => onSubmit(note.id, data)}
+        id={note.id}
+        onSubmit={onSubmit}
         onAddTag={onAddTag}
         availableTags={availableTags}
       />

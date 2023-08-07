@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import NoteLayout from '@/components/NoteLayout';
@@ -6,15 +6,18 @@ import { Note } from '@/types';
 import { useState } from 'react';
 import { Badge, Button, Col, Row, Stack } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown'
+import { DashboardContext } from '@/components/contexts/dashboard.context';
 
 type NoteLayoutProps = {
   notes: Note[];
   onDelete: (id: string) => void
 };
 
-export default function Page({ notes, onDelete }: NoteLayoutProps) {
+export default function Page() {
   const router = useRouter();
   const [currentNote, setCurrentNote] = useState<Note | undefined | null>(null);
+
+  const { notes, onDelete } = useContext(DashboardContext);
 
   return (
     <>
