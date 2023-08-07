@@ -10,7 +10,7 @@ import {
   Badge,
   Modal,
 } from 'react-bootstrap';
-import { useUser } from '@auth0/nextjs-auth0/client';
+import { UserProfile, useUser } from '@auth0/nextjs-auth0/client';
 import ReactSelect from 'react-select';
 import { Tag } from '@/types';
 import styles from '@/styles/NoteList.module.css';
@@ -26,15 +26,16 @@ type NoteListProps = {
   availableTags: Tag[];
   notes: SimplifiedNote[];
   deleteTag: (id: string) => void;
-  updateTag: (id: string, label: string) => void;
+  updateTag: (user: UserProfile | undefined, id: string, label: string) => void;
 };
 
 type EditTagsModalProps = {
+  user: UserProfile | undefined,
   show: boolean;
   availableTags: Tag[];
   handleClose: () => void;
   onDelete: (id: string) => void;
-  onUpdate: (id: string, label: string) => void;
+  onUpdate: (user: UserProfile | undefined, id: string, label: string) => void;
 };
 
 function NoteList({
@@ -132,6 +133,7 @@ function NoteList({
         ))}
       </Row>
       <EditTagsModal
+        user={user}
         onUpdate={updateTag}
         onDelete={deleteTag}
         show={editTagsModalIsOpen}
@@ -175,6 +177,7 @@ function NoteCard({ id, title, tags }: SimplifiedNote) {
 }
 
 function EditTagsModal({
+  user,
   availableTags,
   handleClose,
   show,
@@ -196,7 +199,7 @@ function EditTagsModal({
                     <Form.Control
                       type="text"
                       value={tag.label}
-                      onChange={(e) => onUpdate(tag.id, e.target.value)}
+                      onChange={(e) => onUpdate(user, tag.id, e.target.value)}
                     />
                   </Col>
                   <Col xs="auto">

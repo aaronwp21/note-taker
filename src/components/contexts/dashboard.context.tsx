@@ -21,7 +21,7 @@ type DashboardContextProps = {
   ) => void;
   onDelete: (user: UserProfile | undefined, id: string) => void;
   onAddTag: (user: UserProfile | undefined, tag: Tag) => void;
-  updateTag: (id: string, label: string) => void;
+  updateTag: (user: UserProfile | undefined, id: string, label: string) => void;
   deleteTag: (id: string) => void;
   notes: Note[];
   availableTags: Tag[];
@@ -162,10 +162,10 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
           }
           const res = await response.json();
           console.log(res);
+        }
           setNotes((prevNotes) => {
             return prevNotes.filter((note) => note.id !== id);
           });
-        }
       } catch (err) {
         console.log(err);
       }
@@ -192,8 +192,8 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
           }
           const res = await response.json();
           console.log(res);
-          setTags((prevTags) => [...prevTags, tag]);
         }
+          setTags((prevTags) => [...prevTags, tag]);
       } catch (err) {
         console.log(err);
       }
@@ -201,17 +201,47 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
     [tags, setTags],
   );
 
-  function updateTag(id: string, label: string) {
-    setTags((prevTags) => {
-      return prevTags.map((tag) => {
-        if (tag.id === id) {
-          return { ...tag, label };
-        } else {
-          return tag;
+  const updateTag = useCallback(
+    async (user: UserProfile | undefined, id: string, label: string) => {
+      try {
+        const editedTag = tags.map((tag) => {
+          if (tag.id === id) {
+            return { ...tag, label };
+          } else {
+            return tag;
+          }
+        });
+        if (user) {
+          const response = await fetch(`/api/tags/${user.sub}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              tagsArr: editedTag,
+            }),
+          });
+          if (!response.ok) {
+            throw response;
+          }
+          const res = await response.json();
+          console.log(res);
         }
-      });
-    });
-  }
+        setTags((prevTags) => {
+          return prevTags.map((tag) => {
+            if (tag.id === id) {
+              return { ...tag, label };
+            } else {
+              return tag;
+            }
+          });
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    [tags, setTags],
+  );
 
   function deleteTag(id: string) {
     setTags((prevTags) => {

@@ -1,8 +1,10 @@
 import { useContext } from 'react';
 import { DashboardContext } from '@/components/contexts/dashboard.context';
+import { UserProfile } from '@auth0/nextjs-auth0/client';
 import Layout from '@/components/Layout';
 import NoteList from '@/components/NoteList';
 import { Tag } from '@/types';
+
 
 
 type SimplifiedNote = {
@@ -15,7 +17,7 @@ type NoteListProps = {
   availableTags: Tag[];
   notes: SimplifiedNote[];
   deleteTag: (id: string) => void;
-  updateTag: (id: string, label: string) => void;
+  updateTag: (user: UserProfile | undefined, id: string, label: string) => void;
 };
 
 export default function Home() {
