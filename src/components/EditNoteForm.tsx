@@ -10,7 +10,7 @@ import { v4 as uuidV4 } from 'uuid';
 
 type NoteFormProps = {
   onSubmit: (user: UserProfile, id: string, data: NoteData) => void;
-  onAddTag: (tag: Tag) => void;
+  onAddTag: (user: UserProfile | undefined, tag: Tag) => void;
   availableTags: Tag[];
   id: string;
 } & Partial<NoteData>;
@@ -61,7 +61,7 @@ function EditNoteForm({
               <CreateableReactSelect
                 onCreateOption={(label) => {
                   const newTag = { id: uuidV4(), label };
-                  onAddTag(newTag);
+                  onAddTag(user, newTag);
                   setSelectedTags((prev) => [...prev, newTag]);
                 }}
                 value={selectedTags.map((tag) => {

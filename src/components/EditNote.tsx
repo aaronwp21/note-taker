@@ -5,7 +5,7 @@ import { Note, NoteData, Tag } from '@/types';
 
 type EditNoteProps = {
   onSubmit: (user: UserProfile, id: string, data: NoteData) => void;
-  onAddTag: (tag: Tag) => void;
+  onAddTag: (user: UserProfile | undefined, tag: Tag) => void;
   availableTags: Tag[];
   note: any
 };

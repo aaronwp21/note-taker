@@ -27,6 +27,6 @@ export type Tag = {
 
 export type NewNoteProps = {
   onSubmit: (user:UserProfile, data: NoteData) => void
-  onAddTag: (tag: Tag) => void
+  onAddTag: (user: UserProfile | undefined, tag: Tag) => void
   availableTags: Tag[]
 }

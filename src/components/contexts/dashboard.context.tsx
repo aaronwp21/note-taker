@@ -20,7 +20,7 @@ type DashboardContextProps = {
     { tags, ...data }: NoteData,
   ) => void;
   onDelete: (user: UserProfile | undefined, id: string) => void;
-  onAddTag: (tag: Tag) => void;
+  onAddTag: (user: UserProfile | undefined, tag: Tag) => void;
   updateTag: (id: string, label: string) => void;
   deleteTag: (id: string) => void;
   notes: Note[];
@@ -173,9 +173,33 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
     [notes, setNotes],
   );
 
-  function addTag(tag: Tag) {
-    setTags((prevTags) => [...prevTags, tag]);
-  }
+  const addTag = useCallback(
+    async (user: UserProfile | undefined, tag: Tag) => {
+      try {
+        if (user) {
+          const newTag = [...tags, tag];
+          const response = await fetch(`/api/tags/${user.sub}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              tagsArr: newTag,
+            }),
+          });
+          if (!response.ok) {
+            throw response;
+          }
+          const res = await response.json();
+          console.log(res);
+          setTags((prevTags) => [...prevTags, tag]);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    [tags, setTags],
+  );
 
   function updateTag(id: string, label: string) {
     setTags((prevTags) => {
