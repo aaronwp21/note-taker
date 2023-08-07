@@ -19,7 +19,7 @@ type DashboardContextProps = {
     id: string,
     { tags, ...data }: NoteData,
   ) => void;
-  onDelete: (id: string) => void;
+  onDelete: (user: UserProfile | undefined, id: string) => void;
   onAddTag: (tag: Tag) => void;
   updateTag: (id: string, label: string) => void;
   deleteTag: (id: string) => void;
@@ -143,23 +143,35 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
     [notes, setNotes],
   );
 
-  // function onUpdateNote(id: string, { tags, ...data }: NoteData) {
-  //   setNotes((prevNotes) => {
-  //     return prevNotes.map((note) => {
-  //       if (note.id === id) {
-  //         return { ...note, ...data, tagIds: tags.map((tag) => tag.id) };
-  //       } else {
-  //         return note;
-  //       }
-  //     });
-  //   });
-  // }
-
-  function onDeleteNote(id: string) {
-    setNotes((prevNotes) => {
-      return prevNotes.filter((note) => note.id !== id);
-    });
-  }
+  const onDeleteNote = useCallback(
+    async (user: UserProfile | undefined, id: string) => {
+      try {
+        if (user) {
+          const deletedNote = notes.filter((note) => note.id !== id);
+          const response = await fetch(`/api/notes/${user.sub}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              notesArr: deletedNote,
+            }),
+          });
+          if (!response.ok) {
+            throw response;
+          }
+          const res = await response.json();
+          console.log(res);
+          setNotes((prevNotes) => {
+            return prevNotes.filter((note) => note.id !== id);
+          });
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    [notes, setNotes],
+  );
 
   function addTag(tag: Tag) {
     setTags((prevTags) => [...prevTags, tag]);
