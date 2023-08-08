@@ -4,6 +4,7 @@ import Layout from '@/components/Layout';
 import NoteLayout from '@/components/NoteLayout';
 import { Note } from '@/types';
 import EditNote from '@/components/EditNote';
+import Head from 'next/head';
 
 type NoteLayoutProps = {
   notes: Note[];
@@ -15,15 +16,20 @@ export default function Edit() {
   const { notes, onUpdateNote, onAddTag, availableTags } = useContext(DashboardContext)
 
   return (
-    <Layout>
-      <NoteLayout notes={notes} setCurrentNote={setCurrentNote}>
-        {currentNote ? <EditNote
-          onSubmit={onUpdateNote}
-          onAddTag={onAddTag}
-          availableTags={availableTags}
-          note={currentNote}
-        /> : ''}
-      </NoteLayout>
-    </Layout>
+    <>
+      <Head>
+        <title>Edit Note</title>
+      </Head>
+      <Layout>
+        <NoteLayout notes={notes} setCurrentNote={setCurrentNote}>
+          {currentNote ? <EditNote
+            onSubmit={onUpdateNote}
+            onAddTag={onAddTag}
+            availableTags={availableTags}
+            note={currentNote}
+          /> : ''}
+        </NoteLayout>
+      </Layout>
+    </>
   );
 }

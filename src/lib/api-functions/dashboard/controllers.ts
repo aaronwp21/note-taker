@@ -5,14 +5,13 @@ import {
   fetchDashboard,
   createDashboard,
   updateNotes,
-  updateTags
+  updateTags,
 } from '@/lib/api-functions/dashboard/queries';
 
 export const getDashboard = async (
   req: NextApiRequest,
   res: NextApiResponse,
 ) => {
-
   const { userId } = req.query;
 
   try {
@@ -26,11 +25,11 @@ export const getDashboard = async (
   } catch (err) {
     console.error(err);
   }
-}
+};
 
 export const addDashboard = async (
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) => {
   const { userId } = req.body;
 
@@ -39,13 +38,13 @@ export const addDashboard = async (
     res.status(201).json(data);
   } catch (err) {
     console.error(err);
-    res.status(500).send(err)
+    res.status(500).send(err);
   }
-}
+};
 
 export const updateDbNotes = async (
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) => {
   const { userId } = req.query;
   const { notesArr } = req.body;
@@ -55,14 +54,13 @@ export const updateDbNotes = async (
     if (data.n === 0) return res.status(404).send({ message: 'Not Found' });
     return res.status(200).send({ data });
   } catch (err) {
-    console.log(err);
-    res.status(500).send(err)
+    res.status(500).send(err);
   }
-}
+};
 
 export const updateDbTags = async (
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) => {
   const { userId } = req.query;
   const { tagsArr } = req.body;
@@ -72,7 +70,6 @@ export const updateDbTags = async (
     if (data.n === 0) return res.status(404).send({ message: 'Not Found' });
     return res.status(200).send({ data });
   } catch (err) {
-    console.log(err);
-    res.status(500).send(err)
+    res.status(500).send(err);
   }
-}
+};

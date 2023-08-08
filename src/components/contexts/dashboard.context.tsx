@@ -63,7 +63,7 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
         setNotes(data['NOTES']);
         setTags(data['TAGS']);
       } catch (err) {
-        console.log(err);
+        
       }
     },
     [setNotes, setTags],
@@ -96,7 +96,7 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
           ];
         });
       } catch (err) {
-        console.log(err);
+        
       }
     },
     [setNotes, notes],
@@ -135,7 +135,7 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
           });
         });
       } catch (err) {
-        console.log(err);
+        
       }
     },
     [notes, setNotes],
@@ -164,7 +164,7 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
           return prevNotes.filter((note) => note.id !== id);
         });
       } catch (err) {
-        console.log(err);
+        
       }
     },
     [notes, setNotes],
@@ -191,7 +191,7 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
         }
         setTags((prevTags) => [...prevTags, tag]);
       } catch (err) {
-        console.log(err);
+        
       }
     },
     [tags, setTags],
@@ -232,7 +232,7 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
           });
         });
       } catch (err) {
-        console.log(err);
+        
       }
     },
     [tags, setTags],
@@ -261,7 +261,7 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
           return prevTags.filter((tag) => tag.id !== id);
         });
       } catch (err) {
-        console.log(err);
+        
       }
     },
     [tags, setTags],

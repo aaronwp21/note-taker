@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import Link from 'next/link';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { UserProfile } from '@auth0/nextjs-auth0/client';
 import { useUser } from '@auth0/nextjs-auth0/client';
@@ -9,6 +10,7 @@ import { useState } from 'react';
 import { Badge, Button, Col, Row, Stack } from 'react-bootstrap';
 import ReactMarkdown from 'react-markdown'
 import { DashboardContext } from '@/components/contexts/dashboard.context';
+
 
 export default function Page() {
   const router = useRouter();
@@ -30,6 +32,9 @@ export default function Page() {
 
   return (
     <>
+      <Head>
+        <title>{currentNote ? currentNote.title : 'Note'}</title>
+      </Head>
       <NoteLayout notes={notes} setCurrentNote={setCurrentNote}>
         <Row className="align-items-center mb-4">
           <Col>

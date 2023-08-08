@@ -1,9 +1,11 @@
 import { useContext } from 'react';
+import Head from 'next/head';
 import { DashboardContext } from '@/components/contexts/dashboard.context';
 import { UserProfile } from '@auth0/nextjs-auth0/client';
 import Layout from '@/components/Layout';
 import NoteList from '@/components/NoteList';
 import { Tag } from '@/types';
+
 
 
 
@@ -24,13 +26,18 @@ export default function Home() {
   const { availableTags, notes, updateTag, deleteTag } = useContext(DashboardContext)
 
   return (
-    <Layout>
-      <NoteList
-        availableTags={availableTags}
-        notes={notes}
-        updateTag={updateTag}
-        deleteTag={deleteTag}
-      />
-    </Layout>
+    <>
+      <Head>
+        <title>Notes</title>
+      </Head>
+      <Layout>
+        <NoteList
+          availableTags={availableTags}
+          notes={notes}
+          updateTag={updateTag}
+          deleteTag={deleteTag}
+        />
+      </Layout>
+    </>
   );
 }
