@@ -7,7 +7,7 @@ type EditNoteProps = {
   onSubmit: (user: UserProfile, id: string, data: NoteData) => void;
   onAddTag: (user: UserProfile | undefined, tag: Tag) => void;
   availableTags: Tag[];
-  note: any
+  note: Note
 };
 
 function EditNote({ onSubmit, onAddTag, availableTags, note }: EditNoteProps) {
