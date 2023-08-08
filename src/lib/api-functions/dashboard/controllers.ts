@@ -32,7 +32,7 @@ export const addDashboard = async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
-  const { userId } = req.query;
+  const { userId } = req.body;
 
   try {
     const data = await createDashboard(userId);
