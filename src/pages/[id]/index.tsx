@@ -16,15 +16,16 @@ export default function Page() {
   const router = useRouter();
   const [currentNote, setCurrentNote] = useState<Note | undefined | null>(null);
 
-  const { notes, onDelete } = useContext(DashboardContext);
+  const { notes, onDelete, handleShow } = useContext(DashboardContext);
 
   const { user } = useUser();
 
   useEffect(() => {
     if (!user) {
+      handleShow();
       router.push('/');
     }
-  }, [user, router])
+  }, [user, router, handleShow])
 
   if (!user) {
     return null;

@@ -23,8 +23,11 @@ type DashboardContextProps = {
   onAddTag: (user: UserProfile | undefined, tag: Tag) => void;
   updateTag: (user: UserProfile | undefined, id: string, label: string) => void;
   deleteTag: (user: UserProfile | undefined, id: string) => void;
+  handleShow: () => void;
+  handleClose: () => void;
   notes: Note[];
   availableTags: Tag[];
+  show: boolean;
 };
 
 export const DashboardContext = createContext<DashboardContextProps>({
@@ -35,13 +38,17 @@ export const DashboardContext = createContext<DashboardContextProps>({
   onAddTag: () => [],
   updateTag: () => [],
   deleteTag: () => [],
+  handleShow: () => [],
+  handleClose: () => [],
   notes: [],
   availableTags: [],
+  show: false,
 });
 
 export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
   const [notes, setNotes] = useLocalStorage<RawNote[]>('NOTES', []);
   const [tags, setTags] = useLocalStorage<Tag[]>('TAGS', []);
+  const [show, setShow] = useState(false);
 
   const notesWithTags = useMemo(() => {
     return notes.map((note) => {
@@ -62,9 +69,7 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
         const data = await response.json();
         setNotes(data['NOTES']);
         setTags(data['TAGS']);
-      } catch (err) {
-        
-      }
+      } catch (err) {}
     },
     [setNotes, setTags],
   );
@@ -95,9 +100,7 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
             { ...data, id: id, tagIds: tags.map((tag) => tag.id) },
           ];
         });
-      } catch (err) {
-        
-      }
+      } catch (err) {}
     },
     [setNotes, notes],
   );
@@ -134,9 +137,7 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
             }
           });
         });
-      } catch (err) {
-        
-      }
+      } catch (err) {}
     },
     [notes, setNotes],
   );
@@ -163,9 +164,7 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
         setNotes((prevNotes) => {
           return prevNotes.filter((note) => note.id !== id);
         });
-      } catch (err) {
-        
-      }
+      } catch (err) {}
     },
     [notes, setNotes],
   );
@@ -190,9 +189,7 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
           const res = await response.json();
         }
         setTags((prevTags) => [...prevTags, tag]);
-      } catch (err) {
-        
-      }
+      } catch (err) {}
     },
     [tags, setTags],
   );
@@ -231,9 +228,7 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
             }
           });
         });
-      } catch (err) {
-        
-      }
+      } catch (err) {}
     },
     [tags, setTags],
   );
@@ -260,13 +255,15 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
         setTags((prevTags) => {
           return prevTags.filter((tag) => tag.id !== id);
         });
-      } catch (err) {
-        
-      }
+      } catch (err) {}
     },
     [tags, setTags],
   );
+  
+  const handleShow = () => setShow(true);
 
+  const handleClose = () => setShow(false);
+  
   return (
     <DashboardContext.Provider
       value={{
@@ -277,8 +274,11 @@ export const DashboardProvider = ({ children }: React.PropsWithChildren) => {
         onAddTag: addTag,
         updateTag,
         deleteTag,
+        handleShow,
+        handleClose,
         notes: notesWithTags,
         availableTags: tags,
+        show,
       }}
     >
       {children}

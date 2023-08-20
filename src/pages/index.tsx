@@ -5,6 +5,7 @@ import { UserProfile } from '@auth0/nextjs-auth0/client';
 import Layout from '@/components/Layout';
 import NoteList from '@/components/NoteList';
 import { Tag } from '@/types';
+import LoginModal from '@/components/LoginModal';
 
 
 
@@ -38,6 +39,7 @@ export default function Home() {
           deleteTag={deleteTag}
         />
       </Layout>
+      <LoginModal />
     </>
   );
 }
